@@ -2068,9 +2068,9 @@ async def _register_all(bot_: KATBot) -> None:
             return
         sp = bot_.get_user(row["spouse_id"])
 await eph(interaction, content=f"💍 Your spouse: {sp.mention if sp else '<@' + str(row['spouse_id']) + '>'}")
+
     # ── 10. BIRTHDAY ────────────────────────────────────────────────────────
     @tree.command(name="set_birthday", description="Register your birthday")
-    @app_commands.describe(day="Day (1-31)", month="Month (1-12)", year="Year (e.g. 2000)")
     async def set_birthday(interaction: discord.Interaction, day: int, month: int, year: int) -> None:
         await db.ensure_user(interaction.user)
         await db.exe(
