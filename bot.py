@@ -2067,16 +2067,11 @@ async def _register_all(bot_: KATBot) -> None:
             await eph(interaction, content="No spouse linked.")
             return
         sp = bot_.get_user(row["spouse_id"])
-await eph(interaction, content=f"💍 Your spouse: {sp.mention if sp else '<@' + str(row['spouse_id']) + '>'}")
-
-    # ── 10. BIRTHDAY ────────────────────────────────────────────────────────
+# ── 10. BIRTHDAY ────────────────────────────────────────────────────────
     @tree.command(name="set_birthday", description="Register your birthday")
     async def set_birthday(interaction: discord.Interaction, day: int, month: int, year: int) -> None:
         await db.ensure_user(interaction.user)
-        await db.exe(
-            "UPDATE users SET birthday_day=?,birthday_month=?,birthday_year=?,birthday_status='pending' WHERE user_id=?",
-            (day, month, year, interaction.user.id),
-        )
+        await db.exe("UPDATE users SET birthday_day=?,birthday_month=?,birthday_year=?,birthday_status='pending' WHERE user_id=?", (day, month, year, interaction.user.id), )
         ch = await db.channel(bot_, "staff")
         if ch:
             embed = discord.Embed(title="🎂 Birthday Registration", colour=discord.Colour.orange())
@@ -2087,13 +2082,12 @@ await eph(interaction, content=f"💍 Your spouse: {sp.mention if sp else '<@' +
 
     @tree.command(name="my_birthday", description="Check your registered birthday status")
     async def my_birthday(interaction: discord.Interaction) -> None:
-        row = await db.one("SELECT birthday_day,birthday_month,birthday_year,birthday_status FROM users WHERE user_id=?",
-                           (interaction.user.id,))
+        row = await db.one("SELECT birthday_day,birthday_month,birthday_year,birthday_status FROM users WHERE user_id=?", (interaction.user.id,))
         if not row or not row.get("birthday_day"):
             await eph(interaction, content="No birthday registered. Use /set_birthday.")
             return
         embed = discord.Embed(title="🎂 My Birthday", colour=discord.Colour.gold())
-        embed.add_field(name="Date",   value=f"{row['birthday_day']:02d}/{row['birthday_month']:02d}/{row['birthday_year']}", inline=True)
+        embed.add_field(name="Date", value=f"{row['birthday_day']:02d}/{row['birthday_month']:02d}/{row['birthday_year']}", inline=True)
         embed.add_field(name="Status", value=row["birthday_status"].capitalize(), inline=True)
         await eph(interaction, embed=embed)
 
